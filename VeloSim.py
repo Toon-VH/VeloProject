@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+
 from BicycleStation import BicycleStation
 from Colors import Colors
 from Repository import Repository
@@ -91,7 +93,14 @@ class VeloSim:
 
     @classmethod
     def bring_in_as_user(cls):
-        pass
+        print(Colors.OKBLUE + "Users with bicycle")
+        t = PrettyTable(['Id', 'User'])
+        for user in Repository.users:
+            if user.on_move:
+                t.add_row([user.userid, str(user.name) + " " + str(user.lastname)])
+        print(t)
+        user_id = int(input(Colors.WARNING + 'Select a user Id from the table above: ' + Colors.ENDC))
+
 
     @classmethod
     def borrow_as_transporter(cls):

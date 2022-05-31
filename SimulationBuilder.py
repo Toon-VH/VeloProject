@@ -1,5 +1,4 @@
 import random
-import time
 from random import Random
 from prettytable import PrettyTable
 from Bicycle import Bicycle
@@ -10,26 +9,6 @@ import names
 
 from Repository import Repository
 from User import User
-
-animation = [
-    "[        ]",
-    "[=       ]",
-    "[===     ]",
-    "[====    ]",
-    "[=====   ]",
-    "[======  ]",
-    "[======= ]",
-    "[========]",
-    "[ =======]",
-    "[  ======]",
-    "[   =====]",
-    "[    ====]",
-    "[     ===]",
-    "[      ==]",
-    "[       =]",
-    "[        ]",
-    "[        ]"
-]
 
 
 class SimulationBuilder:
@@ -87,13 +66,13 @@ class SimulationBuilder:
 
         print(Colors.OKGREEN + "\t\t Allocated: " + str(len(Repository.bicycles)) + " Bicycles over "
               + str(counter) + " Stations" + Colors.ENDC)
-        self.__print()
+        # self.__print()
 
     def __print(self):
         t = PrettyTable(['Id', 'Bycicles'])
         for station in Repository.stations:
             t.add_row([station.stationid, str(len(station.slots)) + "/" + str(station.spots)])
-        # print(t)
+        print(t)
 
     def __generateusers(self):
         user = int(input(Colors.WARNING + "\tAmount of users: " + Colors.ENDC))
