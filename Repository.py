@@ -1,25 +1,36 @@
 import json
+from typing import List
 
 from Bicycle import Bicycle
 from BicycleStation import BicycleStation
 from Colors import Colors
+from Transporter import Transporter
 from User import User
 
 
 class Repository:
-    stations = []
-    bicycles = []
-    users = []
+    stations: List[BicycleStation] = []
+    bicycles: List[Bicycle] = []
+    users: List[User] = []
+    transporters: List[Transporter] = []
 
     @staticmethod
     def save():
+        print(Colors.OKGREEN + "Saving Stations..." + Colors.ENDC)
+        with open('Resources/Data/Stations.json', 'w') as outfile:
+            json.dump(Repository.stations, outfile, sort_keys=True, indent=4, cls=BicycleStation.StationEncoder)
+
+        print(Colors.OKGREEN + "Saving Bicycles..." + Colors.ENDC)
+        with open('Resources/Data/Bicycles.json', 'w') as outfile:
+            json.dump(Repository.bicycles, outfile, sort_keys=True, indent=4, cls=Bicycle.BicycleEncoder)
+
         print(Colors.OKGREEN + "Saving Users..." + Colors.ENDC)
         with open('Resources/Data/Users.json', 'w') as outfile:
             json.dump(Repository.users, outfile, sort_keys=True, indent=4, cls=User.UserEncoder)
 
-        print(Colors.OKGREEN + "Saving Stations..." + Colors.ENDC)
-        with open('Resources/Data/Stations.json', 'w') as outfile:
-            json.dump(Repository.stations, outfile, sort_keys=True, indent=4, cls=BicycleStation.StationEncoder)
+        print(Colors.OKGREEN + "Saving Transpoters..." + Colors.ENDC)
+        with open('Resources/Data/Transpoters.json', 'w') as outfile:
+            json.dump(Repository.transporters, outfile, sort_keys=True, indent=4, cls=Transporter.UserEncoder)
 
     @staticmethod
     def load():

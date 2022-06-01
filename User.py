@@ -1,4 +1,7 @@
 from json import JSONEncoder
+from typing import List
+
+from Bicycle import Bicycle
 
 
 class User:
@@ -9,7 +12,7 @@ class User:
         self.age = age
         self.name = name
         self.on_move = False
-        self.bicycle = []
+        self.bicycles: List[Bicycle] = []
         self.capacity = 1
 
     def __str__(self) -> str:
