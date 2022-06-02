@@ -37,17 +37,27 @@ class Repository:
         print(Colors.OKGREEN + "Loading Users..." + Colors.ENDC)
         with open('Resources/Data/Users.json', 'r') as f:
             data = json.load(f, )
-            for user in data:
-                Repository.users.append(User(user['id'], user['name'], user['lastname'], user['age'], user['gender']))
+            for u in data:
+                user = User(u['id'], u['name'], u['lastname'], u['age'], u['gender'])
+                user.on_move = u['on_move']
+                user.bicycles = u['bicycles']
+                Repository.users.append(user)
+        f.close()
+
+        print(Colors.OKGREEN + "Loading Transporters..." + Colors.ENDC)
+        with open('Resources/Data/Trasporter.json', 'r') as f:
+            data = json.load(f, )
+            for u in data:
+                Repository.transporters.append(Transporter(u['id'], u['name'], u['lastname'], u['age'], u['gender']))
         f.close()
 
         print(Colors.OKGREEN + "Loading Stations..." + Colors.ENDC)
         with open('Resources/Data/Stations.json', 'r') as f:
             data = json.load(f)
             for station in data:
-                bicycleStation = BicycleStation(station['id'], station['spots'])
+                bicycle_station = BicycleStation(station['id'], station['spots'])
                 for i in range(len(station["slots"])):
                     bicycle = Bicycle(station['slots'][i]['bicycleid'])
-                    bicycleStation.slots.append(bicycle)
-                Repository.stations.append(bicycleStation)
+                    bicycle_station.slots.append(bicycle)
+                Repository.stations.append(bicycle_station)
         f.close()

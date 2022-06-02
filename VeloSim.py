@@ -171,7 +171,7 @@ class VeloSim:
                         transporter.bicycles)
                 print(Colors.WARNING + "How many bicycles do you want to take?" + Colors.ENDC)
             amount = int(input(Colors.WARNING + "Option between 1 and " + str(max_bicycles) + ": " + Colors.ENDC))
-            if amount < 1 | amount > max_bicycles:
+            if amount < 1 or amount > max_bicycles:
                 print(Colors.FAIL + "Wrong Input" + Colors.ENDC)
             else:
                 rdm = Random()
