@@ -1,11 +1,9 @@
-from random import Random
-
 from prettytable import PrettyTable
-
-from BicycleStation import BicycleStation
 from Colors import Colors
 from Repository import Repository
+from Simulation import Simulation
 from SimulationBuilder import SimulationBuilder
+import logging
 
 
 def get_station():
@@ -23,41 +21,32 @@ def get_user():
 def get_transporter():
     transporter_id = int(input(
         Colors.WARNING + "Transporter ID between 0 and " + str(len(Repository.transporters)) + ": " + Colors.ENDC))
-    return [t for t in Repository.transporters if t.userid == transporter_id][0]
+    t = [t for t in Repository.transporters if t.userid == transporter_id]
+    return t[0]
 
 
 class VeloSim:
+
+    def __init__(self):
+        logging.basicConfig(filename="Resources/Data/displacements.log", level=logging.INFO,
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            datefmt='%d-%b-%y %H:%M:%S')
+
     @classmethod
     def start(cls):
-        AsciArt = r"""
-              ______ _                 _        _____ _                 _       _             
-              | ___ (_)               | |      /  ___(_)               | |     | |            
-              | |_/ /_  ___ _   _  ___| | ___  \ `--. _ _ __ ___  _   _| | __ _| |_ ___  _ __ 
-              | ___ \ |/ __| | | |/ __| |/ _ \  `--. \ | '_ ` _ \| | | | |/ _` | __/ _ \| '__|
-              | |_/ / | (__| |_| | (__| |  __/ /\__/ / | | | | | | |_| | | (_| | || (_) | |   
-              \____/|_|\___|\__, |\___|_|\___| \____/|_|_| |_| |_|\__,_|_|\__,_|\__\___/|_|   
-                             __/ |                                                            
-                            |___/     
-              """
-        print(Colors.HEADER + AsciArt + Colors.ENDC)
+
         value = input(Colors.WARNING + "Do you want to continue with previous simulation (y/n): " + Colors.ENDC)
         if value.upper()[0] == 'Y':
-            print(Colors.OKBLUE + "Loading Data..." + Colors.ENDC)
             Repository.load()
-            cls.actions()
-        if value.upper()[0] == 'N':
-            cls.build()
+            while True:
+                cls.actions()
+        elif value.upper()[0] == 'N':
+            simulationBuilder = SimulationBuilder()
+            simulationBuilder.createsimulation()
             while True:
                 cls.actions()
         else:
             print(Colors.FAIL + "Wrong input" + Colors.ENDC)
-
-    @classmethod
-    def build(cls):
-
-        print(Colors.OKBLUE + Colors.BOLD + "Building Simulation..." + Colors.ENDC)
-        simulationBuilder = SimulationBuilder()
-        simulationBuilder.createsimulation()
 
     @classmethod
     def actions(cls):
@@ -66,8 +55,9 @@ class VeloSim:
         print(Colors.OKCYAN + "Bring in Bicycle as user (2) " + Colors.ENDC)
         print(Colors.OKCYAN + "Borrow Bicycles as transporter (3) " + Colors.ENDC)
         print(Colors.OKCYAN + "Bring in Bicycles as transporter (4) " + Colors.ENDC)
-        print(Colors.OKCYAN + "Generate HTML (5) " + Colors.ENDC)
-        print(Colors.OKCYAN + "Exit (6) " + Colors.ENDC)
+        print(Colors.OKCYAN + "Run Simulation (5) " + Colors.ENDC)
+        print(Colors.OKCYAN + "Generate HTML (6) " + Colors.ENDC)
+        print(Colors.OKCYAN + "Exit (7) " + Colors.ENDC)
         print(Colors.OKCYAN + Colors.BOLD + "<=================================>" + Colors.ENDC)
         option = input(Colors.WARNING + "Action: " + Colors.ENDC)
 
@@ -81,8 +71,10 @@ class VeloSim:
             case "4":
                 cls.bring_in_as_transporter()
             case "5":
-                pass
+                cls.start_simulation()
             case "6":
+                pass
+            case "7":
                 cls.exit_sim()
             case _:
                 print(Colors.FAIL + "Wrong input" + Colors.ENDC)
@@ -105,17 +97,8 @@ class VeloSim:
             cls.actions()
         else:
             print(Colors.OKBLUE + "\t" + str(station) + Colors.ENDC)
-
-        user.on_move = True
-        placing = True
-        rdm = Random()
-        while placing:
-            rdm_slot = rdm.randint(0, station.spots - 1)
-            slot = station.slots[rdm_slot]
-            if slot.bicycle is not None:
-                user.bicycles.append(slot.bicycle)
-                slot.bicycle = None
-                placing = False
+        user.borrow(station)
+        logging.info(f"User: %s (%d) borrowed a bicycle from %s" % (user.name, user.userid, station.street))
         print(Colors.OKGREEN + str(user.name) + " is good to go!" + Colors.ENDC)
 
     @classmethod
@@ -136,15 +119,13 @@ class VeloSim:
                 print(Colors.FAIL + "This user does not have a bicycle, pick an id from the table!" + Colors.ENDC)
             else:
                 station = get_station()
-                placing = True
-                while placing:
-                    rdm = Random()
-                    slot = station.slots[rdm.randint(0, station.spots - 1)]
-                    if slot.bicycle is None:
-                        slot.bicycle = user.bicycles.pop()
-                        user.on_move = False
-                        placing = False
-            print(Colors.OKGREEN + str(user.name) + " Delivered his bicycle!" + Colors.ENDC)
+                if station.calculate_bicycles() == station.spots:
+                    print(Colors.FAIL + "This Station is Full" + Colors.ENDC)
+                    cls.actions()
+                else:
+                    user.bring_in(station)
+                    logging.info(f"User: %s (%d) Delivered a bicycle at %s" % (user.name, user.userid, station.street))
+                    print(Colors.OKGREEN + str(user.name) + " Delivered his bicycle!" + Colors.ENDC)
 
     @classmethod
     def borrow_as_transporter(cls):
@@ -156,6 +137,7 @@ class VeloSim:
             cls.actions()
         else:
             print(Colors.OKBLUE + "\t" + str(transporter) + Colors.ENDC)
+
             # Station
             station = get_station()
             if station.calculate_bicycles() == 0:
@@ -169,25 +151,73 @@ class VeloSim:
                 else:
                     max_bicycles = transporter.capacity - len(
                         transporter.bicycles)
-                print(Colors.WARNING + "How many bicycles do you want to take?" + Colors.ENDC)
+            print(Colors.WARNING + "How many bicycles do you want to take?" + Colors.ENDC)
             amount = int(input(Colors.WARNING + "Option between 1 and " + str(max_bicycles) + ": " + Colors.ENDC))
             if amount < 1 or amount > max_bicycles:
                 print(Colors.FAIL + "Wrong Input" + Colors.ENDC)
             else:
-                rdm = Random()
-                for i in range(amount):
-                    taking = True
-                    while taking:
-                        slot = station.slots[rdm.randint(0, station.spots - 1)]
-                        if slot.bicycle is not None:
-                            transporter.bicycles.append(slot.bicycle)
-                            slot.bicycle = None
-                            taking = False
+                transporter.borrow(station, amount)
+                logging.info(f"Transporter: %s (%d) took %d  bicycles from %s" % (
+                    transporter.name, transporter.userid, amount, station.street))
                 print(Colors.OKGREEN + str(transporter.name) + " Took his bicycles!" + Colors.ENDC)
 
     @classmethod
     def bring_in_as_transporter(cls):
-        pass
+        print(Colors.OKBLUE + "Transporters with bicycles")
+        t = PrettyTable(['Id', 'Transporter', 'Bicycles'])
+        count = 0
+        for transporter in Repository.transporters:
+            if transporter.on_move:
+                t.add_row([transporter.userid, str(transporter.name) + " " + str(transporter.lastname),
+                           str(len(transporter.bicycles))])
+                count += 1
+        print(t)
+        if count <= 0:
+            print(Colors.FAIL + "There are no active transporters!" + Colors.ENDC)
+        else:
+
+            # Transporter
+            transporter = get_transporter()
+            if len(transporter.bicycles) == 0:
+                print(Colors.FAIL + "The transporter has no bicycles! pick one from the table!" + Colors.ENDC)
+                cls.actions()
+            else:
+                print(Colors.OKBLUE + "\t" + str(transporter) + Colors.ENDC)
+
+                station = get_station()
+                if station.calculate_bicycles() == station.spots:
+                    print(Colors.FAIL + "The station is Full!" + Colors.ENDC)
+                    cls.actions()
+                else:
+                    print(Colors.OKBLUE + "\t" + str(station) + Colors.ENDC)
+                    if station.spots - station.calculate_bicycles() < len(transporter.bicycles):
+                        max_bicycles = station.spots - station.calculate_bicycles()
+                    else:
+                        max_bicycles = len(transporter.bicycles)
+                    print(Colors.WARNING + "How many bicycles do you want to leave?" + Colors.ENDC)
+                amount = int(input(Colors.WARNING + "Option between 1 and " + str(max_bicycles) + ": " + Colors.ENDC))
+                if amount < 1 or amount > max_bicycles:
+                    print(Colors.FAIL + "Wrong Input" + Colors.ENDC)
+                else:
+                    transporter.bring_in(station, amount)
+                    logging.info(f"Transporter: %s (%d) Delivered %d bicycles at %s" % (
+                        transporter.name, transporter.userid, amount, station.street))
+                    print(Colors.OKGREEN + str(transporter.name) + " placed his bicycles!" + Colors.ENDC)
+
+    @classmethod
+    def start_simulation(cls):
+        print(Colors.WARNING + "please enter the speed factor Example(4 = 4x real time) :" + Colors.ENDC)
+        speed = int(input(Colors.WARNING + "Option between 1 and 1000: " + Colors.ENDC))
+        if speed < 1 or speed > 1000:
+            print(Colors.FAIL + "Wrong Input" + Colors.ENDC)
+            cls.start_simulation()
+        print(Colors.WARNING + "please enter the amount of active users per minute:" + Colors.ENDC)
+        actions = int(input(Colors.WARNING + "Option between 10 and 500: " + Colors.ENDC))
+        if actions < 1 or actions > 500:
+            print(Colors.FAIL + "Wrong Input" + Colors.ENDC)
+            cls.start_simulation()
+        simulation = Simulation(speed, actions)
+        simulation.start()
 
     @classmethod
     def exit_sim(cls):

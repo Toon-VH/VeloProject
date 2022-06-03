@@ -1,5 +1,7 @@
 import random
 from random import Random
+from typing import List
+
 from Bicycle import Bicycle
 from BicycleStation import BicycleStation
 from Colors import Colors
@@ -25,9 +27,9 @@ def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, lengt
 class SimulationBuilder:
 
     def createsimulation(self):
+        print(Colors.OKBLUE + Colors.BOLD + "Building Simulation..." + Colors.ENDC)
         self.__generatebicyclestations()
         self.generate_bicycles()
-        self.allocating_bicycles()
         self.generate_users()
         self.generate_transporters()
 
@@ -47,28 +49,30 @@ class SimulationBuilder:
 
     @classmethod
     def generate_bicycles(cls):
-        bicycles = int(input(Colors.WARNING + "\tAmount of bicycles: " + Colors.ENDC))
+        bicycles: List[Bicycle] = []
+        amoumt_bicycles = int(input(Colors.WARNING + "\tAmount of bicycles: " + Colors.ENDC))
         amount = 0
         for station in Repository.stations:
             amount += station.spots
-        if bicycles > amount:
+        if amoumt_bicycles > amount:
             print(Colors.FAIL + "\tThere are more bicycles than spots (bicycles: " + str(
-                bicycles) + " spots: " + str(amount) + ")" + Colors.ENDC)
+                amoumt_bicycles) + " spots: " + str(amount) + ")" + Colors.ENDC)
             cls.generate_bicycles()
         else:
             print(Colors.OKBLUE + "\tGenerating Bicycles..." + Colors.ENDC)
             counter = 1
-            for bicycle in range(bicycles):
-                Repository.bicycles.append(Bicycle(counter))
+            for bicycle in range(amoumt_bicycles):
+                bicycles.append(Bicycle(counter))
                 counter += 1
-            print(Colors.OKGREEN + "\t\t Made: " + str(len(Repository.bicycles)) + " Bicycles" + Colors.ENDC)
+            print(Colors.OKGREEN + "\t\t Made: " + str(len(bicycles)) + " Bicycles" + Colors.ENDC)
+            cls.allocating_bicycles(bicycles)
 
     @classmethod
-    def allocating_bicycles(cls):
+    def allocating_bicycles(cls, bicycles):
         print(Colors.OKBLUE + "\tAllocating Bicycles..." + Colors.ENDC)
         counter = 0
         stations_ids = []
-        for bicycle in Repository.bicycles:
+        for bicycle in bicycles:
             rdm = Random()
             placing = True
             while placing:
@@ -90,7 +94,7 @@ class SimulationBuilder:
                             counter += 1
                             stations_ids.append(station.stationid)
 
-        print(Colors.OKGREEN + "\t\t Allocated: " + str(len(Repository.bicycles)) + " Bicycles over " + str(
+        print(Colors.OKGREEN + "\t\t Allocated: " + str(len(bicycles)) + " Bicycles over " + str(
             counter) + " Stations" + Colors.ENDC)
 
     @classmethod
