@@ -1,7 +1,7 @@
 from json import JSONEncoder
 from typing import List
 
-from Slot import Slot
+from Model.Slot import Slot
 
 
 class BicycleStation:

@@ -1,7 +1,6 @@
 from random import Random
 
-from Colors import Colors
-from User import User
+from Model.User import User
 
 
 class Transporter(User):

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/table.css">
+    <title>VeloSim</title>
+    <script>
+        jQuery('a').click(function () {
+            jQuery(this).toggleClass('active');
+        });
+    </script>
+</head>
+
+
+<body>
+<header>
+    <nav>
+        <a href="index.html">Stations</a>
+        <a href="users.html">Users</a>
+        <a href="transporters.html">Transporters</a>
+        <div class="animation start-home"></div>
+    </nav>
+</header>
+<section>
+    {{ tabel }}
+</section>
+</body>
+</html>

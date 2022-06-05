@@ -1,0 +1,90 @@
+[
+    {
+        "age": 55,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "male",
+        "lastname": "Russell",
+        "min_to_arrive": 0,
+        "name": "Roger",
+        "on_move": false,
+        "userid": 1
+    },
+    {
+        "age": 64,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "female",
+        "lastname": "Ramsey",
+        "min_to_arrive": 0,
+        "name": "Kimberly",
+        "on_move": false,
+        "userid": 2
+    },
+    {
+        "age": 25,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "male",
+        "lastname": "Arroyo",
+        "min_to_arrive": 0,
+        "name": "Everett",
+        "on_move": false,
+        "userid": 3
+    },
+    {
+        "age": 57,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "female",
+        "lastname": "Cox",
+        "min_to_arrive": 0,
+        "name": "Iva",
+        "on_move": false,
+        "userid": 4
+    },
+    {
+        "age": 36,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "male",
+        "lastname": "Brown",
+        "min_to_arrive": 0,
+        "name": "David",
+        "on_move": false,
+        "userid": 5
+    },
+    {
+        "age": 27,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "female",
+        "lastname": "Sutton",
+        "min_to_arrive": 0,
+        "name": "Christa",
+        "on_move": false,
+        "userid": 6
+    },
+    {
+        "age": 34,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "female",
+        "lastname": "Randall",
+        "min_to_arrive": 0,
+        "name": "Rachel",
+        "on_move": false,
+        "userid": 7
+    },
+    {
+        "age": 20,
+        "bicycles": [],
+        "capacity": 20,
+        "gender": "female",
+        "lastname": "Popp",
+        "min_to_arrive": 0,
+        "name": "Lakeisha",
+        "on_move": false,
+        "userid": 8
+    }
+]

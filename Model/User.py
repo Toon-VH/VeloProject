@@ -2,7 +2,7 @@ from json import JSONEncoder
 from random import Random
 from typing import List
 
-from Bicycle import Bicycle
+from Model.Bicycle import Bicycle
 
 
 class User:

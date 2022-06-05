@@ -142,7 +142,7 @@ class Simulation:
     def check_if_arrived(cls):
         for user in Repository.users:
             if user.on_move:
-                if user.min_to_arrive <= 1:
+                if user.min_to_arrive <= 0:
                     station = get_station_to_deliver()
                     user.bring_in(station)
                     logging.info(f"User: %s (%d) Delivered a bicycle at %s" % (user.name, user.userid, station.street))
@@ -154,7 +154,7 @@ class Simulation:
 
         for transporter in Repository.transporters:
             if transporter.on_move:
-                if transporter.min_to_arrive <= 1:
+                if transporter.min_to_arrive <= 0:
                     amount = len(transporter.bicycles)
                     station = get_station_to_deliver_as_tranporter(amount)
                     transporter.bring_in(station, amount)

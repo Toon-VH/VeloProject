@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from Colors import Colors
+from HTMLGenerator import HTMLGenerator
 from Repository import Repository
 from Simulation import Simulation
 from SimulationBuilder import SimulationBuilder
@@ -34,10 +35,11 @@ class VeloSim:
 
     @classmethod
     def start(cls):
-
         value = input(Colors.WARNING + "Do you want to continue with previous simulation (y/n): " + Colors.ENDC)
         if value.upper()[0] == 'Y':
-            Repository.load()
+            if Repository.load():
+                print(Colors.FAIL + "No previous simulation found" + Colors.ENDC)
+                cls.start()
             while True:
                 cls.actions()
         elif value.upper()[0] == 'N':
@@ -73,7 +75,8 @@ class VeloSim:
             case "5":
                 cls.start_simulation()
             case "6":
-                pass
+                html = HTMLGenerator()
+                html.create_html()
             case "7":
                 cls.exit_sim()
             case _:

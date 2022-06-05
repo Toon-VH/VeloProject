@@ -1,12 +1,13 @@
 import json
+import os
 from typing import List
 
-from Bicycle import Bicycle
-from BicycleStation import BicycleStation
+from Model.Bicycle import Bicycle
+from Model.BicycleStation import BicycleStation
 from Colors import Colors
-from Slot import Slot
-from Transporter import Transporter
-from User import User
+from Model.Slot import Slot
+from Model.Transporter import Transporter
+from Model.User import User
 
 
 class Repository:
@@ -30,6 +31,8 @@ class Repository:
 
     @staticmethod
     def load():
+        if not os.path.exists("Resources/Data/Stations.json"):
+            return False
         # Stations
         print(Colors.OKBLUE + "Loading Data..." + Colors.ENDC)
         print(Colors.OKGREEN + "Loading Stations..." + Colors.ENDC)

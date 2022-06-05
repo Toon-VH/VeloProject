@@ -1,4 +1,4 @@
-from Bicycle import Bicycle
+from Model.Bicycle import Bicycle
 
 
 class Slot:

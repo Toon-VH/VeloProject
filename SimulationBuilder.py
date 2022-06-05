@@ -2,16 +2,16 @@ import random
 from random import Random
 from typing import List
 
-from Bicycle import Bicycle
-from BicycleStation import BicycleStation
+from Model.Bicycle import Bicycle
+from Model.BicycleStation import BicycleStation
 from Colors import Colors
 import json
 import names
 
 from Repository import Repository
-from Slot import Slot
-from Transporter import Transporter
-from User import User
+from Model.Slot import Slot
+from Model.Transporter import Transporter
+from Model.User import User
 
 
 def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█',
